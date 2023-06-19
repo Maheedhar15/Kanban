@@ -1,0 +1,508 @@
+openapi: 3.0.0
+info:
+  title: Kanban V2 App
+  contact:
+    email: 21f1006544@student.onlinedegree.iitm.ac.in
+  version: 1.0.0
+servers:
+  - url: http://127.0.0.1:5000/
+paths:
+  /login:
+    post:
+      tags:
+        - Users
+      summary: For Login
+      description: To Login and get Authentication-Token
+      operationId: login
+      parameters:
+        - in: query
+          name: email
+          description: Enter Email
+          required: true
+          schema:
+            type: string
+            example: maheedharsumson@gmail.com
+        - in: query
+          name: password
+          description: Enter Password
+          required: true
+          schema:
+            type: string
+            example: '9595'
+      responses:
+        '200':
+          description: Login Successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    user_id:
+                      type: integer
+                      example: 1
+                    password:
+                      type: string
+                      example: '1234'
+                    name:
+                      type: string
+                      example: Maheedhar A
+        '401':
+          description: Incorrect password
+  /forgotpassword:
+    post:
+      tags:
+        - Reset password
+      summary: For password reset
+      description: To Reset Password
+      operationId: forgotpass
+      parameters:
+        - in: query
+          name: email
+          description: Enter Email
+          required: true
+          schema:
+            type: string
+            example: "maheedharsumson@gmail.com"
+        - in: query
+          name: New password
+          description: Enter new password
+          schema:
+            type: string
+            example: "1234"
+      responses:
+        '200':
+          description: Email Verification sent
+        '404':
+          description: Email id Doesn't Exist
+  /dashboard/{uid}:
+    post:
+      tags:
+        - Users
+      summary: Dashboard for the user
+      description: ''
+      operationId: dashboard
+      parameters:
+        - in: path
+          name: uid
+          description: ''
+          required: true
+          schema:
+            type: integer
+        - in: header
+          name: authorization-token
+          description: an authorization header
+          required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    list:
+                      type: array
+                      example: [{'list_id':'1'}]
+                    availableLists:
+                      type: array
+                      example: ['Pending','Completed Task']
+        '401':
+          description: Token Expired
+  /summary/{uid}:
+    get:
+      tags:
+        - Users
+      summary: View the summary for the user
+      description: ''
+      operationId: SummaryView
+      parameters:
+        - in: header
+          name: authorization-token
+          description: an authorization header
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: uid
+          description: ''
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    list:
+                      type: array
+                      example: [{'list_id':'1'}]
+                    availableLists:
+                      type: array
+                      example: ['Pending','Completed Task']
+        '401':
+          description: Invalid Token or Token Missing
+
+  /createList/{uid}:
+    post:
+      tags:
+        - List
+      summary: Add a new List
+      description: ''
+      operationId: createList
+      parameters:
+        - in: header
+          name: authorization-token
+          description: an authorization header
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: uid
+          description: ''
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: l_name
+          description: ''
+          required: true
+          schema:
+            type: string
+            example: Pending
+      responses:
+        '200':
+          description: List Added Successfully
+        '401':
+          description: Invalid Token or Token Missing
+
+  /register:
+    post:
+      tags:
+        - Users
+      summary: Add a new User
+      description: ''
+      operationId: adduser
+      parameters:
+        - in: query
+          name: email
+          description: ''
+          required: true
+          schema:
+            type: string
+            example: "maheedharsumson@gmail.com"
+        - in: query
+          name: password
+          description: ''
+          required: true
+          schema:
+            type: string
+            example: "9595"
+        - in: query
+          name: name
+          description: ''
+          required: true
+          schema:
+            type: string
+            example: "Maheedhar"
+      responses:
+        '200':
+          description: User Added Successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    user_id:
+                      type: integer
+                      example: 1
+                    email:
+                      type: string
+                      example: maheedharsumson@gmail.com
+                    password:
+                      type: string
+                      example: '9595'
+                    name:
+                      type: string
+                      example: Maheedhar A
+  /updateTask/{tid}:
+    post:
+      tags:
+        - Task
+      summary: Update a Task
+      description: ''
+      operationId: updtask
+      parameters:
+        - in: header
+          name: authorization-token
+          description: an authorization header
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: tid
+          description: ''
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: deadline
+          description: ''
+          required: false
+          schema:
+            type: string
+            example: 2022-09-04T21:52
+        - in: query
+          name: title
+          description: Title of Task
+          required: true
+          schema:
+            type: string
+            example: 'New Task'
+        - in: query
+          name: description
+          description: Description of Task
+          required: false
+          schema:
+            type: string
+            example: This task has to be completed by Abhijeet
+        - in: query
+          name: List_id
+          description: List id to which the task has to be added
+          required: true
+          schema:
+            type: string
+            example: 1
+        - in: query
+          name: status
+          description: status of task
+          required: true
+          schema:
+            type: boolean
+            example: 0  
+      responses:
+        '200':
+          description: Task Updated Successfully
+        '401':
+          description: Invalid Token or Token Missing
+  /deleteTask/{tid}:
+    get:
+      tags:
+        - Task
+      summary: Delete a Task
+      description: ''
+      operationId: delTask
+      parameters:
+        - in: path
+          name: tid
+          description: ''
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Task Deleted Successfully
+
+  /updateList/{lid}:
+    post:
+      tags:
+        - List
+      summary: Update a List
+      description: ''
+      operationId: updList
+      parameters:
+        - in: header
+          name: authorization-token
+          description: an authorization header
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: lid
+          description: ''
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - in: query
+          name: list_name
+          description: ''
+          required: false
+          schema:
+            type: string
+            example: Pending
+      responses:
+        '200':
+          description: List Updated Successfully
+        '401':
+          description: Invalid Token or Token is Missing
+  /deleteList/{lid}:
+    get:
+      tags:
+        - List
+      summary: Delete a List
+      description: ''
+      operationId: delList
+      parameters:
+        - in: path
+          name: lid
+          description: ''
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List Deleted Successfully
+        '401':
+          description: Invalid Token or Token Missing
+
+  /createTask/{tid}:
+    post:
+      tags:
+        - Task
+      summary: Create a Task
+      description: ''
+      operationId: createTask
+      parameters:
+        - in: header
+          name: authorization-token
+          description: an authorization header
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: tid
+          description: ''
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: deadline
+          description: ''
+          required: false
+          schema:
+            type: string
+            example: 2022-09-04T21:52
+        - in: query
+          name: title
+          description: Title of Task
+          required: true
+          schema:
+            type: string
+            example: 'New Task'
+        - in: query
+          name: description
+          description: Description of Task
+          required: false
+          schema:
+            type: string
+            example: This task has to be completed by Abhijeet
+        - in: query
+          name: List_id
+          description: List id to which the task has to be added
+          required: true
+          schema:
+            type: string
+            example: 1
+        - in: query
+          name: status
+          description: status of task
+          required: true
+          schema:
+            type: boolean
+            example: 0  
+      responses:
+        '200':
+          description: Task Created Successfully
+        '401':
+          description: Invalid Token or Token Missing
+  /export/{uid}:
+    get:
+      tags:
+        - Export
+      summary: Export All Lists
+      description: ''
+      operationId: Export List
+      parameters:
+        - in: header
+          name: authorization-token
+          description: an authorization header
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: uid
+          description: ''
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    List_name:
+                      type: integer
+                      example: 1
+                    No_of_Tasks:
+                      type: integer
+                      example: 4
+                    No_of_completed tasks:
+                      type: integer
+                      example: 2
+        '401':
+          description: Invalid Token or Token Missing
+
+  /export_list/{lid}:
+    get:
+      tags:
+        - Export
+      summary: Export task belonging to a particular list
+      description: ''
+      operationId: Export Tasks
+      parameters:
+        - in: header
+          name: authorization-token
+          description: an authorization header
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: lid
+          description: ''
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    Task_name:
+                      type: integer
+                      example: 1
+                    Task_description:
+                      type: integer
+                      example: 4
+                    Status of Task:
+                      type: integer
+                      example: 2
+                    Deadline:
+                      type: string
+                      example: 2022-09-04T21:52
+        '401':
+          description: Invalid Token or Token Missing
